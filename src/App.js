@@ -1,10 +1,7 @@
 import React, { Suspense } from 'react'
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-} from 'react-router-dom'
+import { Router, Switch, Route, Redirect } from 'react-router-dom'
+import { history } from './utils/history'
+import AuthRoute from '@/components/AuthRoute'
 
 const Login = React.lazy(() => import('@/pages/Login'))
 const Layout = React.lazy(() => import('@/pages/Layouts'))
@@ -17,19 +14,24 @@ const Search = React.lazy(() => import('@/pages/Search'))
 const SearchResult = React.lazy(() => import('@/pages/Search/Result'))
 
 const App = () => (
-  <Router>
+  <Router history={history}>
     <div className="app">
       <Suspense fallback={<div>loading</div>}>
         <Switch>
-          <Redirect exact from="/" to="/home"></Redirect>
+          <Route exact path="/" render={() => <Redirect to="/home" />} />
+          {/* <Redirect exact from="/" to="/home"></Redirect> */}
           <Route path="/home" component={Layout}></Route>
           <Route path="/login" component={Login}></Route>
           <Route path="/article/:id" component={Article}></Route>
           <Route path="/search" component={Search}></Route>
           <Route path="/search/result" component={SearchResult}></Route>
-          <Route path="/profile/edit" component={ProfileEdit}></Route>
-          <Route path="/profile/feedback" component={ProfileFeedback}></Route>
-          <Route path="/profile/chat" component={Chat}></Route>
+
+          <AuthRoute path="/profile/edit" component={ProfileEdit}></AuthRoute>
+          <AuthRoute
+            path="/profile/feedback"
+            component={ProfileFeedback}
+          ></AuthRoute>
+          <AuthRoute path="/profile/chat" component={Chat}></AuthRoute>
           <Route component={NotFound}></Route>
         </Switch>
       </Suspense>

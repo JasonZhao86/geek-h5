@@ -33,8 +33,10 @@ export default function Login() {
     onSubmit: async (values) => {
       await dispatch(login(values))
       if (!state) {
+        // 如果不是从其他页面跳到的登录页，则登录后默认进入首页
         history.replace('/home')
       } else {
+        // 否则跳回到之前访问的页面
         history.replace(state.from)
       }
     },

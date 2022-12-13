@@ -4,6 +4,7 @@ import { Switch, Route } from 'react-router-dom'
 import { useHistory, useLocation } from 'react-router-dom'
 import classNames from 'classnames'
 import Icon from '@/components/Icon'
+import AuthRoute from '@/components/AuthRoute'
 import style from './index.module.scss'
 
 const Home = React.lazy(() => import('@/pages/Home'))
@@ -33,7 +34,7 @@ const Layout = () => {
             <Route exact path="/home" component={Home}></Route>
             <Route path="/home/question" component={Question}></Route>
             <Route path="/home/video" component={Video}></Route>
-            <Route path="/home/profile" component={Profile}></Route>
+            <AuthRoute path="/home/profile" component={Profile}></AuthRoute>
           </Switch>
         </Suspense>
       </div>

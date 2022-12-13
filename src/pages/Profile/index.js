@@ -1,5 +1,5 @@
 import Icon from '@/components/Icon'
-import { getUser } from '@/store/actions/profile'
+import { getUser } from '@/store/actions'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useHistory } from 'react-router-dom'
