@@ -9,11 +9,16 @@ import { useDispatch } from 'react-redux'
 import { login, sendValidationCode } from '@/store/actions'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useState } from 'react'
+import { AxiosError } from 'axios'
+
+type LocationState = {
+  from: string
+}
 
 export default function Login() {
   const [time, setTime] = useState(0)
   const dispatch = useDispatch()
-  const { state } = useLocation()
+  const { state } = useLocation<LocationState>()
   const history = useHistory()
   const form = useFormik({
     initialValues: {
@@ -69,8 +74,9 @@ export default function Login() {
         })
       }, 1000)
     } catch (err) {
+      const error = err as AxiosError<{ message: string }>
       // es6的写法，只有当？前面的变量为true时，才会执行？后面的代码
-      Toast.info(err.response?.data.message, 1)
+      Toast.info(error.response?.data.message, 1)
     }
   }
 

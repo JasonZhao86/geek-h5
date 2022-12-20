@@ -1,12 +1,22 @@
+import React from 'react'
 import { hasToken } from '@/utils/storage'
-import { Route, Redirect } from 'react-router-dom'
+import { Route, Redirect, RouteProps } from 'react-router-dom'
+
+// 下面这一行注释必须加，表示仅在该行禁用eslint语法检测，否则any类型会引发报错提示
+interface PrivateRouteProps extends RouteProps {
+  // tslint:disable-next-line:no-any
+  component: React.ComponentType<any>
+}
 
 /**
  * 鉴权路由组件
  * @param {*} component 本来 Route 组件上的 component 属性
  * @param {Array} rest 其他属性
  */
-export default function AuthRoute({ component: Component, ...rest }) {
+export default function AuthRoute({
+  component: Component,
+  ...rest
+}: PrivateRouteProps) {
   return (
     <Route
       {...rest}

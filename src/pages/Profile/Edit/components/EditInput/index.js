@@ -39,7 +39,7 @@ const EditInput = ({ config = {}, onClose, onCommit, className }) => {
         {/* 输入框：如果是用户名，则使用单行输入框，否则使用多行输入框 */}
         {name === 'name' ? (
           <div className="input-wrap">
-            <Input value={value} onChange={onValueChange}></Input>
+            <Input value={value} onChange={onValueChange} autoFocus></Input>
           </div>
         ) : (
           <Textarea

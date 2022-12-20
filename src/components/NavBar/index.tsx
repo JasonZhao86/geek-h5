@@ -1,6 +1,14 @@
 import Icon from '@/components/Icon'
 import styles from './index.module.scss'
 import classNames from 'classnames'
+import { ReactNode } from 'react'
+
+type Props = {
+  className?: string
+  children?: string | ReactNode
+  rightContent?: string
+  onLeftClick?: () => void
+}
 
 /**
  * 顶部导航栏
@@ -10,7 +18,7 @@ import classNames from 'classnames'
  * @param {Function} props.onLeftClick 左侧后退按钮的点击事件监听函数
  * @returns
  */
-const NavBar = ({ className, children, rightContent, onLeftClick }) => {
+const NavBar = ({ className, children, rightContent, onLeftClick }: Props) => {
   return (
     <div className={classNames(styles.root, className)}>
       {/* 后退按钮 */}

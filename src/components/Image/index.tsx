@@ -3,20 +3,26 @@ import { useEffect, useRef, useState } from 'react'
 import Icon from '@/components/Icon'
 import styles from './index.module.scss'
 
+type Props = {
+  src: string
+  className?: string
+  alt?: string
+}
+
 /**
  * 拥有懒加载特性的图片组件
  * @param {String} props.src 图片地址
  * @param {String} props.className 样式类
  */
-const Image = ({ src, className }) => {
+const Image = ({ src, className }: Props) => {
   // 记录图片加载是否出错的状态
-  const [isError, setIsError] = useState(false)
+  const [isError, setIsError] = useState<boolean>(false)
 
   // 记录图片是否正在加载的状态
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   // 对图片元素的引用
-  const imgRef = useRef(null)
+  const imgRef = useRef<HTMLImageElement>(null)
 
   useEffect(() => {
     /**
@@ -30,14 +36,18 @@ const Image = ({ src, className }) => {
          * 设置到 src 属性上，即开始真正加载图片
          */
         if (entry.isIntersecting) {
-          const img = entry.target
-          img.src = img.dataset.src
+          // const img = entry.target
+          const img = imgRef.current!
+          img.src = img.dataset.src!
         }
       })
     })
 
-    // 开始监听
-    observer.observe(imgRef.current)
+    /**
+     * 开始监听，imgRef.current是HTMLImageElement和null的联合类型，后面已经绑定
+     * 过imgRef了，所以这里不会出现null的情况，非空断言
+     *  */
+    observer.observe(imgRef.current!)
 
     // 组件销毁时
     return () => {

@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { getTokenInfo, setToken, removeToken } from '@/utils/storage'
 import { Toast } from 'antd-mobile'
 import { history } from './history'
@@ -16,7 +16,8 @@ http.interceptors.request.use((config) => {
   //   config.headers['Content-Type'] = 'application/json'
   // }
   const token = getTokenInfo().token || ''
-  config.headers['Authorization'] = `Bearer ${token}`
+  config.headers!['Authorization'] = `Bearer ${token}`
+  console.log(config)
   return config
 })
 
@@ -25,20 +26,21 @@ http.interceptors.response.use(
     // return response.data
     return response
   },
-  async (error) => {
-    // 获取错误信息中包含的请求配置信息和响应数据
-    const { config, response } = error
-
+  // 泛型形参的传参实际上是传给了AxiosResponse泛型传参，最终该类型传给了AxiosResponse类型的data属性
+  async (err: AxiosError<{ message: string }>) => {
+    // console.dir(err)
     // 网络异常
-    if (!response) {
+    if (!err.response) {
       Toast.info('网络异常，请稍后重试', 1)
-      return Promise.reject(error)
+      return Promise.reject(err)
     }
 
+    // 获取错误信息中包含的请求配置信息和响应数据
+    const { response, config } = err
     // 处理非401的错误返回信息
     if (response.status !== 401) {
       Toast.info(response.data.message, 1)
-      return Promise.reject(error)
+      return Promise.reject(err)
     }
 
     const { token, refresh_token } = getTokenInfo()
@@ -49,7 +51,7 @@ http.interceptors.response.use(
       history.push('/login', {
         from: history.location.pathname || '/home',
       })
-      return Promise.reject(error)
+      return Promise.reject(err)
     }
 
     /**
@@ -58,7 +60,7 @@ http.interceptors.response.use(
      * 例请求拦截器的作用，携带上老的 token 而不是 refresh_token
      */
     try {
-      const res = await axios.put(`${config.baseURL}/authorizations`, null, {
+      const res = await axios.put(`${config!.baseURL}/authorizations`, null, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           Authorization: `Bearer ${refresh_token}`,
@@ -74,8 +76,8 @@ http.interceptors.response.use(
       store.dispatch(saveToken(tokenInfo))
 
       // 重新发送之前因 Token 无效而失败的请求
-      return http(config)
-    } catch (error) {
+      return http(config!)
+    } catch (err) {
       // 如果换取新 token 失败，则清空本地已有的 Token 信息后，跳转到登录页
       // 清除 Redux 和 LocalStorage 中无效的 Token 信息
       removeToken()
@@ -86,7 +88,7 @@ http.interceptors.response.use(
         from: history.location.pathname || '/home',
       })
 
-      return Promise.reject(error)
+      return Promise.reject(err)
     }
   }
 )

@@ -2,13 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 
 const NotFound = () => {
-  const [second, setSecond] = useState(3)
+  const [second, setSecond] = useState<number>(3)
   const history = useHistory()
-  const timerRef = useRef(-1)
+  const timerRef = useRef<number>(-1)
 
   //
   useEffect(() => {
-    timerRef.current = setInterval(() => {
+    timerRef.current = window.setInterval(() => {
       if (second === 1) {
         history.replace('/home')
       } else {

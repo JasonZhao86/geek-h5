@@ -257,11 +257,13 @@ const ProfileEdit = () => {
         // 高度占满全屏，配合drawer样式的width: 100%，就可以控制抽屉横竖全屏占满
         style={{ minHeight: document.documentElement.clientHeight }}
         sidebar={
-          <EditInput
-            config={formConfigMap[formDrawerStatus.name]}
-            onClose={() => toggleDrawer(false)}
-            onCommit={onFormCommit}
-          ></EditInput>
+          formDrawerStatus.visible && (
+            <EditInput
+              config={formConfigMap[formDrawerStatus.name]}
+              onClose={() => toggleDrawer(false)}
+              onCommit={onFormCommit}
+            ></EditInput>
+          )
         }
         open={formDrawerStatus.visible}
         onOpenChange={() => toggleDrawer(false)}
@@ -272,13 +274,15 @@ const ProfileEdit = () => {
         position="bottom"
         className="drawer-list"
         sidebar={
-          <div style={{ height: '100%', backgroundColor: '#ffffff' }}>
-            <EditList
-              config={listConfigMap[listDrawerStatus.name]}
-              onClose={() => toggleDrawer(false)}
-              onSelect={onListSelect}
-            ></EditList>
-          </div>
+          listDrawerStatus.visible && (
+            <div style={{ height: '100%', backgroundColor: '#ffffff' }}>
+              <EditList
+                config={listConfigMap[listDrawerStatus.name]}
+                onClose={() => toggleDrawer(false)}
+                onSelect={onListSelect}
+              ></EditList>
+            </div>
+          )
         }
         // 为两个抽屉关联控制状态、事件监听，来控制它们的显示和隐藏
         open={listDrawerStatus.visible}

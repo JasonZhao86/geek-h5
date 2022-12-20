@@ -5,7 +5,7 @@ import {
   PROFILE_UPDATE_PROFILE,
 } from '@/store/action-types'
 
-const saveUser = (payload) => {
+export const saveUser = (payload) => {
   return {
     type: PROFILE_SAVE_USER,
     payload,

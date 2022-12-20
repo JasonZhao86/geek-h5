@@ -2,6 +2,7 @@ import React, { Suspense } from 'react'
 import { Router, Switch, Route, Redirect } from 'react-router-dom'
 import { history } from './utils/history'
 import AuthRoute from '@/components/AuthRoute'
+// import ProfileEdit from './pages/Profile/Edit'
 
 const Login = React.lazy(() => import('@/pages/Login'))
 const Layout = React.lazy(() => import('@/pages/Layouts'))
