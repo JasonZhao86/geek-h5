@@ -5,22 +5,18 @@ import {
   hasToken,
   setLocalChannels,
 } from '@/utils/storage'
-import {
-  HOME_FEEDBACK_ACTION,
-  HOME_SET_ALLCHANNELS,
-  HOME_SET_ARTICLELIST,
-  HOME_SET_MORE_ARTICLELIST,
-  HOME_SET_USERCHANNELS,
-} from '../action-types'
+
+import { ArticleList, Channel, HomeAction } from '@/store/types'
+import { RootThunkAction } from '@/store'
 
 /**
  * 将用户频道保存到 Redux
  * @param {Array} payload
  * @returns
  */
-export const setUserChannels = (payload) => {
+export const setUserChannels = (payload: Channel[]): HomeAction => {
   return {
-    type: HOME_SET_USERCHANNELS,
+    type: 'home/channel',
     payload,
   }
 }
@@ -29,7 +25,7 @@ export const setUserChannels = (payload) => {
  * 获取用户频道
  * @returns thunk
  */
-export const getUserChannels = () => {
+export const getUserChannels = (): RootThunkAction => {
   return async (dispatch) => {
     // 有token
     if (hasToken()) {
@@ -58,9 +54,9 @@ export const getUserChannels = () => {
  * @param {Array} payload
  * @returns
  */
-export const setAllChannels = (payload) => {
+export const setAllChannels = (payload: Channel[]): HomeAction => {
   return {
-    type: HOME_SET_ALLCHANNELS,
+    type: 'home/allChannel',
     payload,
   }
 }
@@ -68,7 +64,7 @@ export const setAllChannels = (payload) => {
 /**
  * 获取所有的频道
  */
-export const getAllChannels = () => {
+export const getAllChannels = (): RootThunkAction => {
   return async (dispatch) => {
     const res = await http.get('/channels')
     const { channels } = res.data.data
@@ -82,7 +78,7 @@ export const getAllChannels = () => {
  * @param {object} channel
  * @returns
  */
-export const addChannel = (channel) => {
+export const addChannel = (channel: Channel): RootThunkAction => {
   // thunk的第二个参数，它是一个函数，可以获取到store中的所有state状态
   return async (dispatch, getState) => {
     // 获取到所有的userChannels
@@ -105,7 +101,7 @@ export const addChannel = (channel) => {
  * @param {object} channel
  * @returns
  */
-export const delChannel = (channel) => {
+export const delChannel = (channel: Channel): RootThunkAction => {
   // thunk的第二个参数，它是一个函数，可以获取到store中的所有state状态
   return async (dispatch, getState) => {
     // 获取到所有的userChannels
@@ -129,9 +125,9 @@ export const delChannel = (channel) => {
  * @param {object} payload 文章列表
  * @returns action
  */
-export const setArticleList = (payload) => {
+export const setArticleList = (payload: ArticleList): HomeAction => {
   return {
-    type: HOME_SET_ARTICLELIST,
+    type: 'home/articlelist',
     payload,
   }
 }
@@ -142,7 +138,10 @@ export const setArticleList = (payload) => {
  * @param {*} timestamp 时间戳
  * @returns
  */
-export const getArticleList = (channelId, timestamp) => {
+export const getArticleList = (
+  channelId: number,
+  timestamp: string
+): RootThunkAction => {
   return async (dispatch) => {
     const res = await http.get('/articles', {
       params: {
@@ -168,9 +167,9 @@ export const getArticleList = (channelId, timestamp) => {
  * @param {object} payload 文章列表
  * @returns action
  */
-export const setMoreArticleList = (payload) => {
+export const setMoreArticleList = (payload: ArticleList): HomeAction => {
   return {
-    type: HOME_SET_MORE_ARTICLELIST,
+    type: 'home/more_articlelist',
     payload,
   }
 }
@@ -181,7 +180,10 @@ export const setMoreArticleList = (payload) => {
  * @param {*} timestamp 时间戳
  * @returns
  */
-export const getMoreArticleList = (channelId, timestamp) => {
+export const getMoreArticleList = (
+  channelId: number,
+  timestamp: string
+): RootThunkAction => {
   return async (dispatch) => {
     const res = await http.get('/articles', {
       params: {
@@ -208,9 +210,15 @@ export const getMoreArticleList = (channelId, timestamp) => {
  * @param {boolean} visible modal框是否显示
  * @returns
  */
-export const setFeedbackAction = ({ articleId, visible }) => {
+export const setFeedbackAction = ({
+  articleId,
+  visible,
+}: {
+  articleId: string
+  visible: boolean
+}): HomeAction => {
   return {
-    type: HOME_FEEDBACK_ACTION,
+    type: 'home/feedback_action',
     payload: {
       articleId,
       visible,

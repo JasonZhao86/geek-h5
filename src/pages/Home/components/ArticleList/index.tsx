@@ -8,25 +8,31 @@ import {
   setFeedbackAction,
 } from '@/store/actions'
 import { PullToRefresh, InfiniteScroll } from 'antd-mobile-v5'
+import { RootState } from '@/store'
+
+type Props = {
+  channelId: number
+  aid?: number
+}
 
 /**
  * 文章列表组件
  * @param {String} props.channelId 当前文章列表所对应的频道ID
  * @param {String} props.aid 当前 Tab 栏选中的频道ID
  */
-const ArticleList = ({ channelId, aid }) => {
+const ArticleList = ({ channelId, aid }: Props) => {
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
   const dispatch = useDispatch()
 
   useEffect(() => {
     if (channelId === aid) {
-      dispatch(getArticleList(channelId, Date.now()))
+      dispatch(getArticleList(channelId, Date.now() + ''))
     }
     setHasMore(true)
   }, [channelId, aid, dispatch])
 
-  const res = useSelector((state) => state.home.articles[channelId])
+  const res = useSelector((state: RootState) => state.home.articles[channelId])
   const { list } = res || []
 
   // 对应频道ID上没有文章，不做任何渲染
@@ -34,9 +40,8 @@ const ArticleList = ({ channelId, aid }) => {
 
   const { timestamp } = res
 
-  const onRefresh = () => {
-    dispatch(getArticleList(channelId, Date.now()))
-  }
+  const onRefresh = async () =>
+    await dispatch(getArticleList(channelId, Date.now() + ''))
 
   const loadMore = async () => {
     // 如果不是当前频道，不加载数据
@@ -56,7 +61,7 @@ const ArticleList = ({ channelId, aid }) => {
     setLoading(false)
   }
 
-  const onClose = (articleId) => {
+  const onClose = (articleId: string) => {
     dispatch(
       setFeedbackAction({
         articleId,

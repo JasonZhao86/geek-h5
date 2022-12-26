@@ -4,11 +4,15 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useHistory } from 'react-router-dom'
 import styles from './index.module.scss'
+import { RootState } from '@/store'
 
 const Profile = () => {
   const history = useHistory()
   const dispatch = useDispatch()
-  const user = useSelector((state) => state.profile.user)
+  // const user = useSelector((state: RootState) => state.profile.user)
+  const user = useSelector<RootState, RootState['profile']['user']>(
+    (state) => state.profile.user
+  )
 
   useEffect(() => {
     dispatch(getUser())

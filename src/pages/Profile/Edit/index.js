@@ -107,7 +107,11 @@ const ProfileEdit = () => {
 
   // 抽屉表单的数据提交
   const onFormCommit = (name, value) => {
-    dispatch(updateProfile(name, value))
+    dispatch(
+      updateProfile({
+        [name]: value,
+      })
+    )
     // 关闭抽屉
     toggleDrawer(false)
   }
@@ -115,7 +119,11 @@ const ProfileEdit = () => {
   // 抽屉列表的数据选择
   const onListSelect = (name, item, index) => {
     if (name === 'gender') {
-      dispatch(updateProfile(name, item.value))
+      dispatch(
+        updateProfile({
+          [name]: item.value,
+        })
+      )
     } else if (name === 'photo') {
       // 纯网页端的限制，目前不管选择“拍照”或“本地选择”，统一是选择本地文件上传
       inputRef.current.click()
@@ -129,7 +137,11 @@ const ProfileEdit = () => {
     const month = value.getMonth() + 1
     const day = value.getDate()
     const datestr = `${year}-${month}-${day}`
-    dispatch(updateProfile('birthday', datestr))
+    dispatch(
+      updateProfile({
+        birthday: datestr,
+      })
+    )
   }
 
   const onAvatarChange = (e) => {

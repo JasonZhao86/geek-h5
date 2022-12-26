@@ -6,11 +6,19 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import Image from '@/components/Image'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
+import { Article } from '@/store/types'
+import { RootState } from '@/store'
 
 dayjs.extend(relativeTime)
 dayjs.locale('zh-cn')
 
-const ArticleItem = ({ article, onClose }) => {
+type Props = {
+  className: string
+  article: Article
+  onClose: (art_id: string) => void
+}
+
+const ArticleItem = ({ className, article, onClose }: Props) => {
   //   const type = 3
   // const images = ['http://geek.itheima.net/resources/images/3.jpg']
   //   const images = [
@@ -29,12 +37,13 @@ const ArticleItem = ({ article, onClose }) => {
   } = article
 
   // 双感叹号强制转换为bool值
-  const isLogin = useSelector((state) => !!state.login.token)
+  const isLogin = useSelector((state: RootState) => !!state.login.token)
 
   return (
     <div className={styles.root}>
       <div
         className={classnames(
+          className,
           'article-content',
           type === 3 ? 't3' : '',
           type === 0 ? 'none-mt' : ''

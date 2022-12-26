@@ -46,6 +46,7 @@ export default function Home() {
       {/* 频道管理抽屉 */}
       <Drawer
         className="my-drawer"
+        position="left"
         children={''}
         sidebar={
           drawerVisible && (

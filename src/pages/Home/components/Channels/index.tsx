@@ -6,6 +6,14 @@ import { differenceBy } from 'lodash'
 import styles from './index.module.scss'
 import classNames from 'classnames'
 import { Toast } from 'antd-mobile'
+import { RootState } from '@/store'
+import { Channel } from '@/store/types'
+
+type Props = {
+  tabActiveIndex: number
+  onClose: () => void
+  onChannelClick: (index: number) => void
+}
 
 /**
  * 频道管理组件
@@ -13,10 +21,12 @@ import { Toast } from 'antd-mobile'
  * @param {Function} props.onClose 关闭频道管理抽屉时的回调函数
  * @param {Function} props.onChannelClick 当点击频道列表中的某个频道时的回调函数
  */
-const Channels = ({ tabActiveIndex, onClose, onChannelClick }) => {
-  const userChannels = useSelector((state) => state.home.userChannels)
+const Channels = ({ tabActiveIndex, onClose, onChannelClick }: Props) => {
+  const userChannels = useSelector(
+    (state: RootState) => state.home.userChannels
+  )
   // 推荐频道 = 所有频道 - 我的频道
-  const optionChannels = useSelector((state) => {
+  const optionChannels = useSelector((state: RootState) => {
     const { allChannels } = state.home
     // return allChannels.filter(
     //   (item) => userChannels.findIndex((v) => v.id === item.id) === -1
@@ -27,13 +37,13 @@ const Channels = ({ tabActiveIndex, onClose, onChannelClick }) => {
 
   const dispatch = useDispatch()
 
-  const onAddChannel = (channel) => {
+  const onAddChannel = (channel: Channel) => {
     dispatch(addChannel(channel))
   }
 
-  const onDeleteChannel = (channel, i) => {
+  const onDeleteChannel = (channel: Channel, i: number) => {
     if (userChannels.length <= 5) {
-      Toast('至少保留5个频道', 1)
+      Toast.info('至少保留5个频道', 1)
     }
     dispatch(delChannel(channel))
     // 需要处理页面显示的高亮下标
