@@ -6,7 +6,7 @@ import { ReactNode } from 'react'
 type Props = {
   className?: string
   children?: string | ReactNode
-  rightContent?: string
+  rightContent?: string | ReactNode
   onLeftClick?: () => void
 }
 

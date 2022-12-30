@@ -121,3 +121,12 @@ export type HomeAction =
       type: 'home/feedback_action'
       payload: MoreAction
     }
+
+export type SearchType = {
+  suggestions: string[]
+}
+
+export type SearchAction = {
+  type: 'search/saveSuggestions'
+  payload: string[]
+}

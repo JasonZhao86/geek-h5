@@ -9,6 +9,7 @@ import Channels from './components/Channels'
 import ArticleList from './components/ArticleList'
 import { Drawer } from 'antd-mobile'
 import MoreAction from './components/MoreAction'
+import { useHistory } from 'react-router-dom'
 
 export default function Home() {
   const dispatch = useDispatch()
@@ -16,6 +17,7 @@ export default function Home() {
   // 控制抽屉组件，显示和隐藏频道管理组件
   const [drawerVisible, setDrawerVisible] = useState(false)
   const [active, setActive] = useState(0)
+  const history = useHistory()
 
   useEffect(() => {
     dispatch(getUserChannels())
@@ -39,7 +41,7 @@ export default function Home() {
       </Tabs>
       {/* 频道 Tab 栏右侧的两个图标按钮：搜索、频道管理 */}
       <div className="tabs-opration">
-        <Icon type="iconbtn_search" />
+        <Icon type="iconbtn_search" onClick={() => history.push('/search')} />
         <Icon type="iconbtn_channel" onClick={() => setDrawerVisible(true)} />
       </div>
 
