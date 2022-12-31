@@ -4,6 +4,11 @@ import { Toast } from 'antd-mobile'
 import { history } from './history'
 import store from '@/store'
 import { saveToken, clearToken } from '@/store/actions'
+import { AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios'
+
+interface CommonHeaderProperties extends RawAxiosRequestHeaders {
+  Authorization: string
+}
 
 const http = axios.create({
   // baseURL: 'http://geek.itheima.net/v1_0'
@@ -11,13 +16,14 @@ const http = axios.create({
   timeout: 5000,
 })
 
-http.interceptors.request.use((config) => {
+http.interceptors.request.use((config: AxiosRequestConfig) => {
   // if (config.method === 'post') {
   //   config.headers['Content-Type'] = 'application/json'
   // }
   const token = getTokenInfo().token || ''
+  config.headers = config.headers as CommonHeaderProperties
   config.headers!['Authorization'] = `Bearer ${token}`
-  console.log(config)
+  // console.log(config)
   return config
 })
 

@@ -24,7 +24,7 @@ const App = () => (
           <Route path="/home" component={Layout}></Route>
           <Route path="/login" component={Login}></Route>
           <Route path="/article/:id" component={Article}></Route>
-          <Route path="/search" component={Search}></Route>
+          <Route path="/search" exact component={Search}></Route>
           <Route path="/search/result" component={SearchResult}></Route>
 
           <AuthRoute path="/profile/edit" component={ProfileEdit}></AuthRoute>

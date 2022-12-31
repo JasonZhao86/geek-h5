@@ -1,5 +1,7 @@
 const TOKEN_KEY = 'geek-park'
 const CHANNELS_KEY = 'geek-channels'
+// 搜索关键字的本地缓存键名
+const SEARCH_HIS_KEY = 'itcast_history_k'
 
 type TokenInfo = {
   token: string
@@ -50,3 +52,22 @@ export const removeLocalChannels = (): void =>
  * 判断时候有本地频道数据
  */
 export const hasLocalChannels = (): boolean => !!getLocalChannels()
+
+/**
+ * 从缓存获取搜索历史关键字
+ */
+export const getLocalHistories = (): string[] =>
+  JSON.parse(localStorage.getItem(SEARCH_HIS_KEY)!) || []
+
+/**
+ * 将搜索历史关键字存入本地缓存
+ * @param {Array} histories
+ */
+export const setLocalHistories = (histories: string[]) =>
+  localStorage.setItem(SEARCH_HIS_KEY, JSON.stringify(histories))
+
+/**
+ * 删除本地缓存中的搜索历史关键字
+ */
+export const removeLocalHistories = () =>
+  localStorage.removeItem(SEARCH_HIS_KEY)

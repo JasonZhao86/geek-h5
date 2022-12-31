@@ -13,7 +13,7 @@ dayjs.extend(relativeTime)
 dayjs.locale('zh-cn')
 
 type Props = {
-  className: string
+  className?: string
   article: Article
   onClose: (art_id: string) => void
 }

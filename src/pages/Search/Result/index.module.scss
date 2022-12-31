@@ -1,0 +1,15 @@
+.root {
+  // navBar固定后，会挡住一部分详情页，因此被覆盖的部分需要增加padding
+  padding-top: 46px;
+  :global {
+    .nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 999;
+    }
+    .article-list {
+      padding: 0 16px;
+    }
+  }
+}

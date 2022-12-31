@@ -122,11 +122,37 @@ export type HomeAction =
       payload: MoreAction
     }
 
-export type SearchType = {
-  suggestions: string[]
+// 依照后端/search接口返回的data数据的格式创建的类型，需要全部存下，后面上拉刷新需要用到page数据
+export type SearchResultsType = {
+  page: number
+  per_page: number
+  results: Article[]
+  total_count: number
 }
 
-export type SearchAction = {
-  type: 'search/saveSuggestions'
-  payload: string[]
+export type SearchType = {
+  suggestions: string[]
+  histories: string[]
+  // 保存搜索详情页的文章数据
+  searchResults: SearchResultsType
 }
+
+export type SearchAction =
+  | {
+      type: 'search/saveSuggestions'
+      payload: string[]
+    }
+  | {
+      type: 'search/clearSuggestions'
+    }
+  | {
+      type: 'search/saveHistories'
+      payload: string[]
+    }
+  | {
+      type: 'search/clearHistories'
+    }
+  | {
+      type: 'search/saveSearchResults'
+      payload: SearchResultsType
+    }
