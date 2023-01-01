@@ -2,15 +2,10 @@ import classnames from 'classnames'
 import Icon from '@/components/Icon'
 import styles from './index.module.scss'
 import { useSelector } from 'react-redux'
-import relativeTime from 'dayjs/plugin/relativeTime'
 import Image from '@/components/Image'
 import dayjs from 'dayjs'
-import 'dayjs/locale/zh-cn'
 import { Article } from '@/store/types'
 import { RootState } from '@/store'
-
-dayjs.extend(relativeTime)
-dayjs.locale('zh-cn')
 
 type Props = {
   className?: string

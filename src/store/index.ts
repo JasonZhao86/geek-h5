@@ -9,6 +9,7 @@ import {
   ProfileAction,
   SearchAction,
   SearchResultsType,
+  ArticleAction,
 } from '@/store/types'
 
 const store = createStore(
@@ -26,7 +27,12 @@ const store = createStore(
 
 export type RootState = ReturnType<typeof store.getState>
 
-type RootAction = LoginAction | HomeAction | ProfileAction | SearchAction
+type RootAction =
+  | LoginAction
+  | HomeAction
+  | ProfileAction
+  | SearchAction
+  | ArticleAction
 
 export type RootThunkAction = ThunkAction<
   Promise<void>,

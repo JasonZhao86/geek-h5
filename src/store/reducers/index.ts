@@ -2,6 +2,7 @@ import { combineReducers } from 'redux'
 import { login } from './login'
 import { profile } from './profile'
 import { search } from './search'
+import { article } from './article'
 import home from './home'
 
 // 组合各个 reducer 函数，成为一个根 reducer
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   profile,
   home,
   search,
+  article,
 })
 
 export default rootReducer

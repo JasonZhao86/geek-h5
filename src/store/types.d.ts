@@ -156,3 +156,63 @@ export type SearchAction =
       type: 'search/saveSearchResults'
       payload: SearchResultsType
     }
+
+// 定义article文章详情的各字段类型
+export type ArticleDetail = {
+  art_id: string
+  title: string
+  pubdate: string
+  aut_id: string
+  content: string
+  aut_name: string
+  aut_photo: string
+  is_followed: boolean
+  is_collected: boolean
+  attitude: number
+  comm_count: number
+  read_count: number
+  like_count: number
+}
+
+// 定义comment评论的类型
+export type CommentDetail = {
+  com_id: string
+  content: string
+  reply_count: number
+  pubdate: string
+  is_followed: boolean
+  is_liking: boolean
+  like_count: number
+  aut_id: string
+  aut_name: string
+  aut_photo: string
+}
+
+// 定义后端comment类型
+type CommentType = {
+  total_count: number
+  end_id: string
+  last_id: string
+  results: CommentDetail[]
+}
+
+// 定义article reducer初始状态的类型
+export type ArticleType = {
+  articleDetail: ArticleDetail
+  comments: CommentType
+}
+
+// 定义article action的联合类型
+export type ArticleAction =
+  | {
+      type: 'article/saveArticleDetail'
+      payload: ArticleDetail
+    }
+  | {
+      type: 'article/saveComments'
+      payload: CommentType
+    }
+  | {
+      type: 'article/saveMoreComments'
+      payload: CommentType
+    }
