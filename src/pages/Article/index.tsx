@@ -1,7 +1,9 @@
 import Icon from '@/components/Icon'
+import Sticky from '@/components/Sticky'
 import NavBar from '@/components/NavBar'
 import NoComment from '@/components/NoComment'
 import CommentItem from './components/CommentItem'
+import CommentFooter from './components/CommentFooter'
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router'
@@ -77,8 +79,12 @@ const Article = () => {
     const onScroll = throttle(() => {
       // 获取 .author 元素的位置信息
       const rect = authorEl.getBoundingClientRect()
-      // 如果 .author 元素的顶部移出屏幕外，则显示顶部导航栏上的作者信息
-      if (rect.top <= 0) {
+      /**
+       * 如果 .author 元素的顶部移出屏幕外，则显示顶部导航栏上的作者信息，
+       * rect有可能为undefined，当滚动过程当中突然点返回，导致组件Article
+       * 组件被销毁，此时获取到的rect就是undefined
+       */
+      if (rect && rect.top <= 0) {
         setShowNavAuthor(true)
       } else {
         // 否则隐藏导航栏上的作者信息，ShowNavAuthor为false不执行
@@ -101,6 +107,23 @@ const Article = () => {
       // 'a'表示品论，'c'表示评论回复
       getMoreArticleComments({ type: 'a', source: articleId, offset: last_id })
     )
+  }
+
+  const commentRef = useRef<HTMLDivElement>(null)
+  /**
+   * 文章详情页首次渲染时，评论列表在最下面，不在可视区，组件每次渲染时，必须保证
+   * isShowComment不被重新定义初始化，所以需要使用useRef记录
+   *  */
+  const isShowComment = useRef(false)
+  const goComment = () => {
+    // 已经显示，需要滚动回文章头部
+    if (isShowComment.current) {
+      window.scrollTo(0, 0)
+    } else {
+      // 不在显示区，需要滚动到评论列表位置
+      window.scrollTo(0, commentRef.current!.offsetTop)
+    }
+    isShowComment.current = !isShowComment.current
   }
 
   return (
@@ -178,12 +201,15 @@ const Article = () => {
             </div>
 
             {/* 文章评论区 */}
-            <div className="comment">
-              {/* 评论总览信息 */}
-              <div className="comment-header">
-                <span>全部评论（{info.comm_count}）</span>
-                <span>{info.like_count} 点赞</span>
-              </div>
+            <div className="comment" ref={commentRef}>
+              {/* navbar组件的高度是46px，吸顶距离顶部的高度是46，否则会被navbar组件盖住 */}
+              <Sticky offset={46}>
+                {/* 评论总览信息 */}
+                <div className="comment-header">
+                  <span>全部评论（{info.comm_count}）</span>
+                  <span>{info.like_count} 点赞</span>
+                </div>
+              </Sticky>
               {/* 评论列表 */}
               {info.comm_count === 0 ? (
                 // 没有评论时显示的界面
@@ -204,6 +230,8 @@ const Article = () => {
             </div>
           </div>
         </>
+        {/* 评论工具栏 */}
+        <CommentFooter goComment={goComment} />
       </div>
     </div>
   )
