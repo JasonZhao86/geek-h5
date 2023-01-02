@@ -14,6 +14,8 @@ const Sticky = ({ children, offset = 0 }: Props) => {
   const childrenRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    // top/375 = x/当前屏幕宽度
+    let realOffset = (offset / 375) * document.documentElement.clientWidth
     const placeholderEl = placeholderRef.current!
     const childrenEl = childrenRef.current!
 
@@ -21,9 +23,9 @@ const Sticky = ({ children, offset = 0 }: Props) => {
       // 滚动监听事件必须监听占位元素的top值，childrenRef元素固定定位之后继续滚动时，其top值就固定不变了
       const rect = placeholderEl.getBoundingClientRect()
       // 方式滚动过程中突然离开页面组件销毁导致获取到的rect为undefined
-      if (rect && rect.top <= offset) {
+      if (rect && rect.top <= realOffset) {
         childrenEl.style.position = 'fixed'
-        childrenEl.style.top = offset + 'px'
+        childrenEl.style.top = realOffset + 'px'
         placeholderEl.style.height = childrenEl.offsetHeight + 'px'
       } else {
         // 不固定定位，就跟没设置一样，默认就是不固定定位

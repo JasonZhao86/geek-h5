@@ -54,7 +54,7 @@ http.interceptors.response.use(
     // 如果是没有 Token 或 Refresh Token
     if (!token || !refresh_token) {
       // 跳转到登录页，并携带上当前正在访问的页面(第二个参数，会被赋值给history.location.state属性)，等登录成功后再跳回该页面
-      history.push('/login', {
+      history.replace('/login', {
         from: history.location.pathname || '/home',
       })
       return Promise.reject(err)
@@ -90,7 +90,7 @@ http.interceptors.response.use(
       store.dispatch(clearToken())
 
       // 跳转到登录页，并携带上当前正在访问的页面，等登录成功后再跳回该页面
-      history.push('/login', {
+      history.replace('/login', {
         from: history.location.pathname || '/home',
       })
 

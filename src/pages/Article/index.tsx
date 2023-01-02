@@ -210,6 +210,7 @@ const Article = () => {
                   <span>{info.like_count} 点赞</span>
                 </div>
               </Sticky>
+
               {/* 评论列表 */}
               {info.comm_count === 0 ? (
                 // 没有评论时显示的界面
