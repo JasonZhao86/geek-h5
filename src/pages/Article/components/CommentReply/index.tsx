@@ -1,5 +1,6 @@
 import NavBar from '@/components/NavBar'
 import NoComment from '@/components/NoComment'
+import CommentInput from '../CommentInput'
 import { CommentDetail } from '@/store/types'
 import { useEffect, useState } from 'react'
 import http from '@/utils/http'
@@ -7,6 +8,7 @@ import CommentFooter from '../CommentFooter'
 import CommentItem from '../CommentItem'
 import { CommentRes } from '@/store/actions/article'
 import { CommentType } from '@/store/types'
+import { Drawer } from 'antd-mobile'
 import { InfiniteScroll } from 'antd-mobile-v5'
 import styles from './index.module.scss'
 
@@ -14,6 +16,17 @@ type Props = {
   articleId: string
   onClose: () => void
   comment: CommentDetail
+}
+
+// 添加回复成功后的响应类型
+type AddReplyRes = {
+  data: {
+    art_id: string
+    com_id: string
+    new_obj: CommentDetail
+    target: string
+  }
+  message: string
 }
 
 const CommentReply = ({ articleId, onClose, comment }: Props) => {
@@ -51,6 +64,39 @@ const CommentReply = ({ articleId, onClose, comment }: Props) => {
     })
   }
 
+  // 对评论回复抽屉的状态
+  const [drawerStatus, setDrawerStatus] = useState({
+    visible: false,
+  })
+
+  const onOpenDrawer = () => {
+    setDrawerStatus({
+      visible: true,
+    })
+  }
+
+  const onCloseDrawer = () => {
+    setDrawerStatus({
+      visible: false,
+    })
+  }
+
+  // 发送请求，添加回复
+  const onAddReply = async (content: string) => {
+    const res = await http.post<AddReplyRes>('/comments', {
+      target: comment.com_id,
+      content,
+      // 添加回复时，必传文章的articleId
+      art_id: articleId,
+    })
+
+    // 添加评论的一条回复数据
+    setReplyList({
+      ...replyList,
+      results: [res.data.data.new_obj, ...replyList.results],
+    })
+  }
+
   return (
     <div className={styles.root}>
       <div className="reply-wrapper">
@@ -82,8 +128,29 @@ const CommentReply = ({ articleId, onClose, comment }: Props) => {
         </div>
 
         {/* type用于控制是否显示评论和点赞按钮 */}
-        <CommentFooter type="reply" />
+        <CommentFooter onOpenComment={onOpenDrawer} type="reply" />
       </div>
+
+      {/* 对评论回复的抽屉 */}
+      <Drawer
+        className="drawer"
+        position="bottom"
+        children={''}
+        sidebar={
+          <div className="drawer-sidebar-wrapper">
+            {drawerStatus.visible && (
+              <CommentInput
+                articleId={articleId}
+                onClose={onCloseDrawer}
+                name={comment.aut_name}
+                onAddReply={onAddReply}
+              />
+            )}
+          </div>
+        }
+        open={drawerStatus.visible}
+        onOpenChange={onCloseDrawer}
+      ></Drawer>
     </div>
   )
 }

@@ -321,7 +321,7 @@ const Article = () => {
         onOpenChange={onCloseComment}
       ></Drawer>
 
-      {/* 评论回复抽屉 */}
+      {/* 评论回复列表抽屉 */}
       <Drawer
         className="drawer-right"
         position="right"

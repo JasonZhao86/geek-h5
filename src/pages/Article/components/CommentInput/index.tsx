@@ -7,16 +7,17 @@ import styles from './index.module.scss'
 type Props = {
   onClose: () => void
   articleId: string
+  name?: string
+  onAddReply?: (content: string) => void
 }
 
 /**
- * @param {String} props.com_id 评论ID
- * @param {String} props.name 评论人姓名
  * @param {Function} props.onClose 关闭评论表单时的回调函数
- * @param {Function} props.onComment 发表评论成功时的回调函数
  * @param {String} props.articleId 文章ID
+ * @param {String} props.name 评论人姓名
+ * @param {Function} props.onAddReply 发表评论回复时的回调函数
  */
-const CommentInput = ({ onClose, articleId }: Props) => {
+const CommentInput = ({ onClose, articleId, name, onAddReply }: Props) => {
   const [value, setValue] = useState('')
   const txtRef = useRef<HTMLTextAreaElement>(null)
   const dispatch = useDispatch()
@@ -35,9 +36,16 @@ const CommentInput = ({ onClose, articleId }: Props) => {
   const onSendComment = async () => {
     if (value.trim() === '') return
 
-    await dispatch(addComment(articleId, value))
-    // await等待添加成功后，关闭评论抽屉
-    onClose()
+    if (name) {
+      // 添加回复，添加逻辑由CommentReply提供，因为评论列表的状态数据在后者中
+      onAddReply && onAddReply(value)
+      onClose()
+    } else {
+      // 添加评论
+      await dispatch(addComment(articleId, value))
+      // await等待添加成功后，关闭评论抽屉
+      onClose()
+    }
   }
 
   return (
@@ -50,11 +58,11 @@ const CommentInput = ({ onClose, articleId }: Props) => {
           </span>
         }
       >
-        评论文章
+        {name ? '回复评论' : '评论文章'}
       </NavBar>
 
       <div className="input-area">
-        {/* {name && <div className="at">@{name}:</div>} */}
+        {name && <div className="at">@{name}:</div>}
         <textarea
           ref={txtRef}
           placeholder="说点什么~"
