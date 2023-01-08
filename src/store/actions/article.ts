@@ -23,7 +23,7 @@ export const getArticleInfo = (articleId: string): RootThunkAction => {
   }
 }
 
-type CommentRes = {
+export type CommentRes = {
   data: CommentType
   message: string
 }

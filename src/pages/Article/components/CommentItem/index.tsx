@@ -5,9 +5,11 @@ import styles from './index.module.scss'
 
 type Props = {
   comment: CommentDetail
+  onOpenReply?: (comment: CommentDetail) => void
+  type?: string
 }
 
-const CommentItem = ({ comment }: Props) => {
+const CommentItem = ({ comment, onOpenReply, type = 'normal' }: Props) => {
   return (
     <div className={styles.root}>
       {/* 评论者头像 */}
@@ -30,18 +32,23 @@ const CommentItem = ({ comment }: Props) => {
         </div>
         {/* 评论内容 */}
         <div className="comment-content">{comment.content}</div>
-        <div className="comment-footer">
-          {/* 回复按钮 */}
-          <span className="replay">
-            {comment.reply_count}回复 <Icon type="iconbtn_right" />
-          </span>
-          {/* 评论日期 */}
-          <span className="comment-time">
-            {dayjs(comment.pubdate).fromNow()}
-          </span>
-          {/* 未提供举报评论接口 */}
-          {/* <Icon className="close" type="iconbtn_essay_close" /> */}
-        </div>
+        {type === 'reply' ? null : (
+          <div className="comment-footer">
+            {/* 回复按钮 */}
+            <span
+              className="replay"
+              onClick={() => onOpenReply && onOpenReply(comment)}
+            >
+              {comment.reply_count}回复 <Icon type="iconbtn_right" />
+            </span>
+            {/* 评论日期 */}
+            <span className="comment-time">
+              {dayjs(comment.pubdate).fromNow()}
+            </span>
+            {/* 未提供举报评论接口 */}
+            {/* <Icon className="close" type="iconbtn_essay_close" /> */}
+          </div>
+        )}
       </div>
     </div>
   )

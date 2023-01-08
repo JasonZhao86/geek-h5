@@ -5,6 +5,7 @@ import NoComment from '@/components/NoComment'
 import CommentItem from './components/CommentItem'
 import CommentFooter from './components/CommentFooter'
 import CommentInput from './components/CommentInput'
+import CommentReply from './components/CommentReply'
 import Share from './components/Share'
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -24,6 +25,7 @@ import { InfiniteScroll } from 'antd-mobile-v5'
 import { Drawer } from 'antd-mobile'
 import 'highlight.js/styles/vs2015.css'
 import styles from './index.module.scss'
+import { CommentDetail } from '@/store/types'
 
 const Article = () => {
   const history = useHistory()
@@ -157,6 +159,27 @@ const Article = () => {
     setCommentDrawerStatus({ visible: false })
   }
 
+  // 回复评论抽屉状态
+  const [showReply, setShowReply] = useState({
+    visible: false,
+    // 回复评论中需要显示原始评论，从这里传入
+    originComment: {} as CommentDetail,
+  })
+
+  const onOpenReply = (comment: CommentDetail) => {
+    setShowReply({
+      visible: true,
+      originComment: comment,
+    })
+  }
+
+  const onCloseReply = () => {
+    setShowReply({
+      visible: false,
+      originComment: {} as CommentDetail,
+    })
+  }
+
   return (
     <div className={styles.root}>
       <div className="root-wrapper">
@@ -250,7 +273,11 @@ const Article = () => {
                 <div className="comment-list">
                   {/* 首次渲染是results还未获取到数据，为undefined */}
                   {results?.map((item) => (
-                    <CommentItem key={item.com_id} comment={item} />
+                    <CommentItem
+                      key={item.com_id}
+                      comment={item}
+                      onOpenReply={onOpenReply}
+                    />
                   ))}
                 </div>
               )}
@@ -292,6 +319,26 @@ const Article = () => {
         }
         open={commentDrawerStatus.visible}
         onOpenChange={onCloseComment}
+      ></Drawer>
+
+      {/* 评论回复抽屉 */}
+      <Drawer
+        className="drawer-right"
+        position="right"
+        children={''}
+        sidebar={
+          <div className="drawer-sidebar-wrapper">
+            {showReply.visible && (
+              <CommentReply
+                articleId={info.art_id}
+                onClose={onCloseReply}
+                comment={showReply.originComment}
+              />
+            )}
+          </div>
+        }
+        open={showReply.visible}
+        onOpenChange={onCloseReply}
       ></Drawer>
     </div>
   )

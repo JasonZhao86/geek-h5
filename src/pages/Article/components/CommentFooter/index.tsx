@@ -5,12 +5,18 @@ import { setArticleLiking, setAritcleCollection } from '@/store/actions'
 import styles from './index.module.scss'
 
 type Props = {
-  goComment: () => void
-  onOpenShare: () => void
-  onOpenComment: () => void
+  goComment?: () => void
+  onOpenShare?: () => void
+  onOpenComment?: () => void
+  type?: string
 }
 
-const CommentFooter = ({ goComment, onOpenShare, onOpenComment }: Props) => {
+const CommentFooter = ({
+  goComment,
+  onOpenShare,
+  onOpenComment,
+  type = 'normal',
+}: Props) => {
   const articleDetail = useSelector(
     (item: RootState) => item.article.articleDetail
   )
@@ -32,24 +38,26 @@ const CommentFooter = ({ goComment, onOpenShare, onOpenComment }: Props) => {
         <Icon type="iconbianji" />
         <span>去评论</span>
       </div>
-      <>
-        <div className="action-item" onClick={goComment}>
-          <Icon type="iconbtn_comment" />
-          <p>评论</p>
-          <span className="bage">{articleDetail.comm_count}</span>
-        </div>
-        <div className="action-item" onClick={onLike}>
-          {/* attitude: 1表示点赞，0表示不喜欢，-1表示无态度 */}
-          <Icon
-            type={
-              articleDetail.attitude === 1
-                ? 'iconbtn_like_sel'
-                : 'iconbtn_like2'
-            }
-          />
-          <p>点赞</p>
-        </div>
-      </>
+      {type === 'reply' ? null : (
+        <>
+          <div className="action-item" onClick={goComment}>
+            <Icon type="iconbtn_comment" />
+            <p>评论</p>
+            <span className="bage">{articleDetail.comm_count}</span>
+          </div>
+          <div className="action-item" onClick={onLike}>
+            {/* attitude: 1表示点赞，0表示不喜欢，-1表示无态度 */}
+            <Icon
+              type={
+                articleDetail.attitude === 1
+                  ? 'iconbtn_like_sel'
+                  : 'iconbtn_like2'
+              }
+            />
+            <p>点赞</p>
+          </div>
+        </>
+      )}
 
       <div className="action-item" onClick={onCollected}>
         <Icon
