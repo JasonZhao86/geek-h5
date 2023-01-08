@@ -32,6 +32,7 @@ const Article = () => {
   const info = useSelector((state: RootState) => state.article.articleDetail)
   const [showNavAuthor, setShowNavAuthor] = useState(false)
   const authorRef = useRef<HTMLDivElement>(null)
+  const wrapperRef = useRef<HTMLDivElement>(null)
   const { results, end_id, last_id } = useSelector(
     (state: RootState) => state.article.comments
   )
@@ -77,6 +78,7 @@ const Article = () => {
   // 监听滚动，控制 NavBar 中作者信息的显示或隐藏
   useEffect(() => {
     const authorEl = authorRef.current!
+    const wrapperEl = wrapperRef.current!
 
     // 滚动监听函数，使用lodash的节流函数，控制执行频度
     const onScroll = throttle(() => {
@@ -94,12 +96,12 @@ const Article = () => {
         showNavAuthor && setShowNavAuthor(false)
       }
     }, 300)
-    // 在全局document上注册 .wrapper 元素的scroll事件
-    document.addEventListener('scroll', onScroll)
+    // 滚动的是.wrapper内容部分，因此只能在.wrapper内容部分监听滚动事件，不能在整个document上监听
+    wrapperEl.addEventListener('scroll', onScroll)
 
     return () => {
       // 注销 .wrapper 元素的 scroll 事件
-      document.removeEventListener('scroll', onScroll)
+      wrapperEl.removeEventListener('scroll', onScroll)
     }
   }, [showNavAuthor])
 
@@ -119,12 +121,15 @@ const Article = () => {
    *  */
   const isShowComment = useRef(false)
   const goComment = () => {
+    const wrapperEl = wrapperRef.current!
     // 已经显示，需要滚动回文章头部
     if (isShowComment.current) {
-      window.scrollTo(0, 0)
+      wrapperEl.scrollTo(0, 0)
     } else {
+      // 处理js中像素和视宽的适配问题
+      const top = (46 / 375) * document.documentElement.clientWidth
       // 不在显示区，需要滚动到评论列表位置
-      window.scrollTo(0, commentRef.current!.offsetTop)
+      wrapperEl.scrollTo(0, commentRef.current!.offsetTop - top)
     }
     isShowComment.current = !isShowComment.current
   }
@@ -157,7 +162,6 @@ const Article = () => {
       <div className="root-wrapper">
         {/* 顶部导航栏 */}
         <NavBar
-          className="nav"
           onLeftClick={() => history.go(-1)}
           rightContent={
             <span onClick={onOpenShare}>
@@ -185,7 +189,7 @@ const Article = () => {
 
         {/* 数据加载完成后显示的实际界面 */}
         <>
-          <div className="wrapper">
+          <div className="wrapper" ref={wrapperRef}>
             <div className="article-wrapper">
               {/* 文章描述信息栏 */}
               <div className="header">
