@@ -22,6 +22,15 @@ export const article = (state = initState, action: ArticleAction) => {
           results: [...state.comments.results, ...action.payload.results],
         },
       }
+    case 'article/saveNewComment':
+      return {
+        ...state,
+        comments: {
+          ...state.comments,
+          // 新增评论，而非覆盖
+          results: [action.payload, ...state.comments.results],
+        },
+      }
     default:
       return state
   }

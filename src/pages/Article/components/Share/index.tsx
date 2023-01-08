@@ -1,6 +1,10 @@
 import styles from './index.module.scss'
 
-const Share = ({ onClose }) => {
+type Props = {
+  onClose: () => void
+}
+
+const Share = ({ onClose }: Props) => {
   return (
     <div className={styles.root}>
       <div className="share-header">立即分享给好友</div>

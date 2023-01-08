@@ -6,9 +6,11 @@ import styles from './index.module.scss'
 
 type Props = {
   goComment: () => void
+  onOpenShare: () => void
+  onOpenComment: () => void
 }
 
-const CommentFooter = ({ goComment }: Props) => {
+const CommentFooter = ({ goComment, onOpenShare, onOpenComment }: Props) => {
   const articleDetail = useSelector(
     (item: RootState) => item.article.articleDetail
   )
@@ -26,7 +28,7 @@ const CommentFooter = ({ goComment }: Props) => {
 
   return (
     <div className={styles.root}>
-      <div className="input-btn">
+      <div className="input-btn" onClick={onOpenComment}>
         <Icon type="iconbianji" />
         <span>去评论</span>
       </div>
@@ -59,7 +61,7 @@ const CommentFooter = ({ goComment }: Props) => {
         />
         <p>收藏</p>
       </div>
-      <div className="action-item">
+      <div className="action-item" onClick={onOpenShare}>
         <Icon type="iconbtn_share" />
         <p>分享</p>
       </div>

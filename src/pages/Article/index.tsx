@@ -4,6 +4,8 @@ import NavBar from '@/components/NavBar'
 import NoComment from '@/components/NoComment'
 import CommentItem from './components/CommentItem'
 import CommentFooter from './components/CommentFooter'
+import CommentInput from './components/CommentInput'
+import Share from './components/Share'
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router'
@@ -19,6 +21,7 @@ import DOMPurify from 'dompurify'
 import hljs from 'highlight.js'
 import throttle from 'lodash/throttle'
 import { InfiniteScroll } from 'antd-mobile-v5'
+import { Drawer } from 'antd-mobile'
 import 'highlight.js/styles/vs2015.css'
 import styles from './index.module.scss'
 
@@ -126,6 +129,29 @@ const Article = () => {
     isShowComment.current = !isShowComment.current
   }
 
+  // 分享抽屉状态
+  const [shareDrawerStatus, setShareDrawerStatus] = useState(false)
+  const onOpenShare = () => {
+    setShareDrawerStatus(true)
+  }
+
+  const onCloseShare = () => {
+    setShareDrawerStatus(false)
+  }
+
+  // 评论抽屉状态
+  const [commentDrawerStatus, setCommentDrawerStatus] = useState({
+    visible: false,
+  })
+
+  const onOpenComment = () => {
+    setCommentDrawerStatus({ visible: true })
+  }
+
+  const onCloseComment = () => {
+    setCommentDrawerStatus({ visible: false })
+  }
+
   return (
     <div className={styles.root}>
       <div className="root-wrapper">
@@ -134,7 +160,7 @@ const Article = () => {
           className="nav"
           onLeftClick={() => history.go(-1)}
           rightContent={
-            <span>
+            <span onClick={onOpenShare}>
               <Icon type="icongengduo" />
             </span>
           }
@@ -232,8 +258,37 @@ const Article = () => {
           </div>
         </>
         {/* 评论工具栏 */}
-        <CommentFooter goComment={goComment} />
+        <CommentFooter
+          goComment={goComment}
+          onOpenShare={onOpenShare}
+          onOpenComment={onOpenComment}
+        />
       </div>
+      {/* 分享抽屉 */}
+      <Drawer
+        className="drawer-share"
+        position="bottom"
+        children={''}
+        sidebar={shareDrawerStatus && <Share onClose={onCloseShare}></Share>}
+        open={shareDrawerStatus}
+        onOpenChange={onCloseShare}
+      ></Drawer>
+
+      {/* 评论表单抽屉 */}
+      <Drawer
+        className="drawer"
+        position="bottom"
+        children={''}
+        sidebar={
+          <div className="drawer-sidebar-wrapper">
+            {commentDrawerStatus.visible && (
+              <CommentInput onClose={onCloseComment} articleId={info.art_id} />
+            )}
+          </div>
+        }
+        open={commentDrawerStatus.visible}
+        onOpenChange={onCloseComment}
+      ></Drawer>
     </div>
   )
 }

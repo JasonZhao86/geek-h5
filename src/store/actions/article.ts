@@ -1,6 +1,6 @@
 import http from '@/utils/http'
 import { RootThunkAction } from '@/store'
-import { ArticleDetail, CommentType } from '@/store/types'
+import { ArticleDetail, CommentType, CommentDetail } from '@/store/types'
 
 // 定义后端article文章详情接口的返回类型
 type ArticleDetailRes = {
@@ -116,6 +116,41 @@ export const setAritcleCollection = (
         target: articleId,
       })
     }
+    dispatch(getArticleInfo(articleId))
+  }
+}
+
+type AddCommentRes = {
+  data: {
+    com_id: string
+    new_obj: CommentDetail
+    target: string
+  }
+  message: string
+}
+
+/**
+ * 给文章添加评论
+ * @param articleId 文章ID
+ * @param content 评论的内容
+ * @returns ThunkAction
+ */
+export const addComment = (
+  articleId: string,
+  content: string
+): RootThunkAction => {
+  return async (dispatch) => {
+    const res = await http.post<AddCommentRes>('/comments', {
+      target: articleId,
+      content,
+      // 添加文章评论时，不需要传articleId参数，回复评论时需要传articleId参数
+    })
+    // 因为原先的comments带有分页，重新获取comments会覆盖原先的分页，这里直接将新增的评论添加到redux中
+    dispatch({
+      type: 'article/saveNewComment',
+      payload: res.data.data.new_obj,
+    })
+    // 重新渲染文章详情页，渲染最新的评论数
     dispatch(getArticleInfo(articleId))
   }
 }
