@@ -220,3 +220,7 @@ export type ArticleAction =
       type: 'article/saveNewComment'
       payload: CommentDetail
     }
+  | {
+      type: 'article/updateComment'
+      payload: CommentDetail
+    }

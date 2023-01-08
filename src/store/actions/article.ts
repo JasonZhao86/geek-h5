@@ -1,6 +1,11 @@
 import http from '@/utils/http'
 import { RootThunkAction } from '@/store'
-import { ArticleDetail, CommentType, CommentDetail } from '@/store/types'
+import {
+  ArticleDetail,
+  CommentType,
+  CommentDetail,
+  ArticleAction,
+} from '@/store/types'
 
 // 定义后端article文章详情接口的返回类型
 type ArticleDetailRes = {
@@ -152,5 +157,17 @@ export const addComment = (
     })
     // 重新渲染文章详情页，渲染最新的评论数
     dispatch(getArticleInfo(articleId))
+  }
+}
+
+/**
+ * 添加新增的comment回复到redux中
+ * @param comment 新增的一条comment回复
+ * @returns
+ */
+export const updateComment = (comment: CommentDetail): ArticleAction => {
+  return {
+    type: 'article/updateComment',
+    payload: comment,
   }
 }

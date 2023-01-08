@@ -31,6 +31,23 @@ export const article = (state = initState, action: ArticleAction) => {
           results: [action.payload, ...state.comments.results],
         },
       }
+    case 'article/updateComment':
+      return {
+        ...state,
+        comments: {
+          ...state.comments,
+          // 将添加成功的评论回复更新到评论的回复列表中，替换该条评论的旧回复列表
+          results: state.comments.results.map((item) => {
+            // 被添加回复的那条评论
+            if (item.com_id === action.payload.com_id) {
+              return action.payload
+            } else {
+              // 其他评论的回复列表
+              return item
+            }
+          }),
+        },
+      }
     default:
       return state
   }

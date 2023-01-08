@@ -3,10 +3,12 @@ import NoComment from '@/components/NoComment'
 import CommentInput from '../CommentInput'
 import { CommentDetail } from '@/store/types'
 import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import http from '@/utils/http'
 import CommentFooter from '../CommentFooter'
 import CommentItem from '../CommentItem'
 import { CommentRes } from '@/store/actions/article'
+import { updateComment } from '@/store/actions'
 import { CommentType } from '@/store/types'
 import { Drawer } from 'antd-mobile'
 import { InfiniteScroll } from 'antd-mobile-v5'
@@ -32,6 +34,7 @@ type AddReplyRes = {
 const CommentReply = ({ articleId, onClose, comment }: Props) => {
   // 演示直接在组件中发请求获取并渲染数据要注意的问题：首次渲染组件并渲染获取到的数据，但此时请求还未发起
   const [replyList, setReplyList] = useState<CommentType>({} as CommentType)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     // 获取评论的回复列表
@@ -93,8 +96,17 @@ const CommentReply = ({ articleId, onClose, comment }: Props) => {
     // 添加评论的一条回复数据
     setReplyList({
       ...replyList,
+      total_count: replyList.total_count + 1,
       results: [res.data.data.new_obj, ...replyList.results],
     })
+
+    // 将新增的回复添加redux中
+    dispatch(
+      updateComment({
+        ...comment,
+        reply_count: comment.reply_count + 1,
+      })
+    )
   }
 
   return (
@@ -102,7 +114,8 @@ const CommentReply = ({ articleId, onClose, comment }: Props) => {
       <div className="reply-wrapper">
         {/* 顶部导航栏 */}
         <NavBar className="transparent-navbar" onLeftClick={onClose}>
-          {comment.reply_count}条回复
+          {/* 改为本地组件的state中获取总的回复条数，不再从父组件中获取，否则需要更新父组件中的数据 */}
+          {replyList.total_count}条回复
         </NavBar>
 
         {/* 原评论信息 */}
@@ -113,9 +126,10 @@ const CommentReply = ({ articleId, onClose, comment }: Props) => {
 
         <div className="reply-list">
           <div className="reply-header">全部回复</div>
-          {/* 错误写法，组件首次渲染时，请求还未发起，此时replyList.total_count为undefined */}
-          {/* {replyList.total_count === 0 ? ( */}
-          {comment.reply_count === 0 ? (
+          {/* 注意，组件首次渲染时，请求还未发起，此时replyList.total_count为undefined */}
+          {replyList.total_count === 0 ? (
+            // 改为本地组件的state中获取总的回复条数，不再从父组件中获取，否则需要更新父组件中的数据
+            // {comment.reply_count === 0 ? (
             <NoComment />
           ) : (
             // 发起请求获取数据的操作在页面首次加载完成后才会发生，此时replyList.results为undefined
