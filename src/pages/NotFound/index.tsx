@@ -6,11 +6,10 @@ const NotFound = () => {
   const history = useHistory()
   const timerRef = useRef<number>(-1)
 
-  //
   useEffect(() => {
     timerRef.current = window.setInterval(() => {
       if (second === 1) {
-        history.replace('/home')
+        history.replace('/home/index')
       } else {
         setSecond(second - 1)
       }
@@ -23,7 +22,7 @@ const NotFound = () => {
     <div>
       <h1>对不起，你访问的内容不存在...</h1>
       <p>
-        {second} 秒后，返回<Link to="/home">首页</Link>
+        {second} 秒后，返回<Link to="/home/index">首页</Link>
       </p>
     </div>
   )

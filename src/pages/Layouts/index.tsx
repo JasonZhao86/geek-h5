@@ -5,6 +5,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import classNames from 'classnames'
 import Icon from '@/components/Icon'
 import AuthRoute from '@/components/AuthRoute'
+import KeepAlive from '@/components/KeepAlive'
 import style from './index.module.scss'
 
 const Home = React.lazy(() => import('@/pages/Home'))
@@ -14,7 +15,7 @@ const Profile = React.lazy(() => import('@/pages/Profile'))
 
 // - to 点击按钮后切换到的页面路径
 const buttons = [
-  { id: 1, title: '首页', to: '/home', icon: 'iconbtn_home' },
+  { id: 1, title: '首页', to: '/home/index', icon: 'iconbtn_home' },
   { id: 2, title: '回答', to: '/home/question', icon: 'iconbtn_qa' },
   { id: 3, title: '视频', to: '/home/video', icon: 'iconbtn_video' },
   { id: 4, title: '我的', to: '/home/profile', icon: 'iconbtn_mine' },
@@ -30,8 +31,13 @@ const Layout = () => {
       {/* 区域一：点击按钮切换显示内容的区域 */}
       <div className="tab-content">
         <Suspense fallback={<div>loading</div>}>
+          <KeepAlive
+            alivePath="/home/index"
+            path="/home/index"
+            component={Home}
+          ></KeepAlive>
           <Switch>
-            <Route exact path="/home" component={Home}></Route>
+            {/* <Route exact path="/home" component={Home}></Route> */}
             <Route path="/home/question" component={Question}></Route>
             <Route path="/home/video" component={Video}></Route>
             <AuthRoute path="/home/profile" component={Profile}></AuthRoute>

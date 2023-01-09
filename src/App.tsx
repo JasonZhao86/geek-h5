@@ -2,6 +2,7 @@ import React, { Suspense } from 'react'
 import { Router, Switch, Route, Redirect } from 'react-router-dom'
 import { history } from './utils/history'
 import AuthRoute from '@/components/AuthRoute'
+import KeepAlive from '@/components/KeepAlive'
 // import ProfileEdit from './pages/Profile/Edit'
 
 const Login = React.lazy(() => import('@/pages/Login'))
@@ -18,10 +19,18 @@ const App = () => (
   <Router history={history}>
     <div className="app">
       <Suspense fallback={<div>loading</div>}>
+        {/* 无论path是否匹配location，都会渲染该Route对应的组件，所以不能放在Switch中 */}
+        <KeepAlive
+          alivePath="/home"
+          path="/home"
+          component={Layout}
+          // 必须精确匹配，因为二级路由下的Home组件也是以/home开头的
+          exact
+        ></KeepAlive>
         <Switch>
-          <Route exact path="/" render={() => <Redirect to="/home" />} />
-          {/* <Redirect exact from="/" to="/home"></Redirect> */}
-          <Route path="/home" component={Layout}></Route>
+          <Route exact path="/" render={() => <Redirect to="/home/index" />} />
+          {/* <Redirect exact from="/" to="/home/index"></Redirect> */}
+          {/* <Route path="/home" component={Layout}></Route> */}
           <Route path="/login" component={Login}></Route>
           <Route path="/article/:id" component={Article}></Route>
           <Route path="/search" exact component={Search}></Route>
@@ -33,7 +42,15 @@ const App = () => (
             component={ProfileFeedback}
           ></AuthRoute>
           <AuthRoute path="/profile/chat" component={Chat}></AuthRoute>
-          <Route component={NotFound}></Route>
+          {/* 因为 /home不在Switch内部，所以访问/home开头的路由都会最后匹配404，因为KeepAlive不在
+          Switch内部，不受其匹配成功后不继续向后匹配原则的限制 */}
+          <Route
+            render={(props) => {
+              if (!props.location.pathname.startsWith('/home')) {
+                return <NotFound />
+              }
+            }}
+          ></Route>
         </Switch>
       </Suspense>
     </div>
