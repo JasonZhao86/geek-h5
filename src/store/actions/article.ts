@@ -206,3 +206,24 @@ export const setCommentLiking = (comment: CommentDetail): RootThunkAction => {
       })
   }
 }
+
+/**
+ * 关注作者或取关作者
+ * @param article 谋篇文章的详情信息
+ * @returns
+ */
+export const setAuthorFollow = (article: ArticleDetail): RootThunkAction => {
+  return async (dispatch) => {
+    if (article.is_followed) {
+      // 取消关注
+      await http.delete(`/user/followings/${article.aut_id}`)
+    } else {
+      // 关注作者
+      await http.post('/user/followings', {
+        target: article.aut_id,
+      })
+    }
+
+    dispatch(getArticleInfo(article.art_id))
+  }
+}

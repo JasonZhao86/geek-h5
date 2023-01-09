@@ -15,6 +15,7 @@ import {
   getArticleComments,
   getMoreArticleComments,
   setCommentLiking,
+  setAuthorFollow,
 } from '@/store/actions'
 import classNames from 'classnames'
 import { RootState } from '@/store'
@@ -26,7 +27,7 @@ import { InfiniteScroll } from 'antd-mobile-v5'
 import { Drawer } from 'antd-mobile'
 import 'highlight.js/styles/vs2015.css'
 import styles from './index.module.scss'
-import { CommentDetail } from '@/store/types'
+import { ArticleDetail, CommentDetail } from '@/store/types'
 
 const Article = () => {
   const history = useHistory()
@@ -207,6 +208,11 @@ const Article = () => {
     dispatch(setCommentLiking(comment))
   }
 
+  // 关注作者或取关作者
+  const onFollow = (article: ArticleDetail) => {
+    dispatch(setAuthorFollow(article))
+  }
+
   return (
     <div className={styles.root}>
       <div className="root-wrapper">
@@ -259,6 +265,7 @@ const Article = () => {
                       'follow',
                       info.is_followed ? 'followed' : ''
                     )}
+                    onClick={() => onFollow(info)}
                   >
                     {info.is_followed ? '已关注' : '关注'}
                   </span>
