@@ -30,7 +30,8 @@ const App = () => (
         <Switch>
           <Route exact path="/" render={() => <Redirect to="/home/index" />} />
           {/* <Redirect exact from="/" to="/home/index"></Redirect> */}
-          {/* <Route path="/home" component={Layout}></Route> */}
+          {/* 解决location为/home匹配不到任何组件的bug */}
+          <Redirect exact from="/home" to="/home/index"></Redirect>
           <Route path="/login" component={Login}></Route>
           <Route path="/article/:id" component={Article}></Route>
           <Route path="/search" exact component={Search}></Route>
