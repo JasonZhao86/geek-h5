@@ -9,6 +9,7 @@ import {
 } from '@/store/actions'
 import { PullToRefresh, InfiniteScroll } from 'antd-mobile-v5'
 import { RootState } from '@/store'
+import { useHistory } from 'react-router-dom'
 
 type Props = {
   channelId: number
@@ -24,6 +25,7 @@ const ArticleList = ({ channelId, aid }: Props) => {
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
   const dispatch = useDispatch()
+  const history = useHistory()
 
   useEffect(() => {
     if (channelId === aid) {
@@ -75,7 +77,11 @@ const ArticleList = ({ channelId, aid }: Props) => {
       <div className="articles">
         <PullToRefresh onRefresh={onRefresh}>
           {list.map((item) => (
-            <div className="article-item" key={item.art_id}>
+            <div
+              className="article-item"
+              key={item.art_id}
+              onClick={() => history.push(`/article/${item.art_id}`)}
+            >
               <ArticleItem
                 className="article-item"
                 article={item}
