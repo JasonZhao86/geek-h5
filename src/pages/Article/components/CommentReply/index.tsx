@@ -8,7 +8,7 @@ import http from '@/utils/http'
 import CommentFooter from '../CommentFooter'
 import CommentItem from '../CommentItem'
 import { CommentRes } from '@/store/actions/article'
-import { updateComment } from '@/store/actions'
+import { updateComment, setCommentLiking } from '@/store/actions'
 import { CommentType } from '@/store/types'
 import { Drawer } from 'antd-mobile'
 import { InfiniteScroll } from 'antd-mobile-v5'
@@ -18,6 +18,7 @@ type Props = {
   articleId: string
   onClose: () => void
   comment: CommentDetail
+  setReplyLiking: () => void
 }
 
 // 添加回复成功后的响应类型
@@ -31,7 +32,12 @@ type AddReplyRes = {
   message: string
 }
 
-const CommentReply = ({ articleId, onClose, comment }: Props) => {
+const CommentReply = ({
+  articleId,
+  onClose,
+  comment,
+  setReplyLiking,
+}: Props) => {
   // 演示直接在组件中发请求获取并渲染数据要注意的问题：首次渲染组件并渲染获取到的数据，但此时请求还未发起
   const [replyList, setReplyList] = useState<CommentType>({} as CommentType)
   const dispatch = useDispatch()
@@ -109,6 +115,37 @@ const CommentReply = ({ articleId, onClose, comment }: Props) => {
     )
   }
 
+  // 更新本组件state中的评论数据
+  const updateCommentLiking = (comment: CommentDetail) => {
+    setReplyList({
+      ...replyList,
+      results: replyList.results.map((item) => {
+        if (comment.com_id === item.com_id) {
+          // 点赞更新后的回复
+          if (comment.is_liking) {
+            // 取消点赞
+            return {
+              ...item,
+              is_liking: false,
+              like_count: comment.like_count <= 0 ? 0 : comment.like_count - 1,
+            }
+          } else {
+            // 点赞
+            return {
+              ...item,
+              is_liking: true,
+              like_count: comment.like_count + 1,
+            }
+          }
+        } else {
+          // 点赞未更新的回复
+          return item
+        }
+      }),
+    })
+    dispatch(setCommentLiking(comment))
+  }
+
   return (
     <div className={styles.root}>
       <div className="reply-wrapper">
@@ -121,7 +158,11 @@ const CommentReply = ({ articleId, onClose, comment }: Props) => {
         {/* 原评论信息 */}
         <div className="origin-comment">
           {/* type用于控制是否显示回复按钮 */}
-          <CommentItem comment={comment} type="reply" />
+          <CommentItem
+            comment={comment}
+            type="reply"
+            updateCommentLiking={setReplyLiking}
+          />
         </div>
 
         <div className="reply-list">
@@ -135,7 +176,12 @@ const CommentReply = ({ articleId, onClose, comment }: Props) => {
             // 发起请求获取数据的操作在页面首次加载完成后才会发生，此时replyList.results为undefined
             replyList.results &&
             replyList.results.map((item) => (
-              <CommentItem key={item.com_id} comment={item} type="reply" />
+              <CommentItem
+                key={item.com_id}
+                comment={item}
+                type="reply"
+                updateCommentLiking={() => updateCommentLiking(item)}
+              />
             ))
           )}
           <InfiniteScroll hasMore={hasMore} loadMore={loadMore} />

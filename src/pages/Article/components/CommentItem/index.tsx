@@ -6,10 +6,16 @@ import styles from './index.module.scss'
 type Props = {
   comment: CommentDetail
   onOpenReply?: (comment: CommentDetail) => void
+  updateCommentLiking?: () => void
   type?: string
 }
 
-const CommentItem = ({ comment, onOpenReply, type = 'normal' }: Props) => {
+const CommentItem = ({
+  comment,
+  onOpenReply,
+  updateCommentLiking,
+  type = 'normal',
+}: Props) => {
   return (
     <div className={styles.root}>
       {/* 评论者头像 */}
@@ -26,6 +32,7 @@ const CommentItem = ({ comment, onOpenReply, type = 'normal' }: Props) => {
           <span className="thumbs-up">
             {comment.like_count}
             <Icon
+              onClick={updateCommentLiking}
               type={comment.is_liking ? 'iconbtn_like_sel' : 'iconbtn_like2'}
             ></Icon>
           </span>

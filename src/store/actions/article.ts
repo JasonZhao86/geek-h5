@@ -171,3 +171,38 @@ export const updateComment = (comment: CommentDetail): ArticleAction => {
     payload: comment,
   }
 }
+
+/**
+ * 点赞评论
+ * @param comment 某条评论详情，包括评论的id号
+ * @returns
+ */
+export const setCommentLiking = (comment: CommentDetail): RootThunkAction => {
+  let payload = null
+  return async (dispatch) => {
+    if (comment.is_liking) {
+      // 取消点赞
+      await http.delete(`/comment/likings/${comment.com_id}`)
+      payload = {
+        ...comment,
+        is_liking: false,
+        like_count: comment.like_count <= 0 ? 0 : comment.like_count - 1,
+      }
+    } else {
+      // 点赞
+      await http.post('/comment/likings', {
+        target: comment.com_id,
+      })
+      payload = {
+        ...comment,
+        is_liking: true,
+        like_count: comment.like_count + 1,
+      }
+    }
+    payload &&
+      dispatch({
+        type: 'article/updateComment',
+        payload,
+      })
+  }
+}

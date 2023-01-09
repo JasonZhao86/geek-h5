@@ -14,6 +14,7 @@ import {
   getArticleInfo,
   getArticleComments,
   getMoreArticleComments,
+  setCommentLiking,
 } from '@/store/actions'
 import classNames from 'classnames'
 import { RootState } from '@/store'
@@ -180,6 +181,32 @@ const Article = () => {
     })
   }
 
+  // 更新回复的点赞状态
+  const setReplyLiking = (comment: CommentDetail) => {
+    if (comment.is_liking) {
+      // 取消点赞
+      setShowReply({
+        visible: true,
+        originComment: {
+          ...comment,
+          is_liking: false,
+          like_count: comment.like_count <= 0 ? 0 : comment.like_count - 1,
+        },
+      })
+    } else {
+      // 点赞
+      setShowReply({
+        visible: true,
+        originComment: {
+          ...comment,
+          is_liking: true,
+          like_count: comment.like_count + 1,
+        },
+      })
+    }
+    dispatch(setCommentLiking(comment))
+  }
+
   return (
     <div className={styles.root}>
       <div className="root-wrapper">
@@ -277,6 +304,9 @@ const Article = () => {
                       key={item.com_id}
                       comment={item}
                       onOpenReply={onOpenReply}
+                      updateCommentLiking={() =>
+                        dispatch(setCommentLiking(item))
+                      }
                     />
                   ))}
                 </div>
@@ -333,6 +363,7 @@ const Article = () => {
                 articleId={info.art_id}
                 onClose={onCloseReply}
                 comment={showReply.originComment}
+                setReplyLiking={() => setReplyLiking(showReply.originComment)}
               />
             )}
           </div>
