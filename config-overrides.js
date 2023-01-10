@@ -4,6 +4,7 @@ const {
   fixBabelImports,
   addWebpackAlias,
   addPostcssPlugins,
+  addWebpackExternals,
 } = require('customize-cra')
 
 // 按需加载，antd-mobile v5不需要配置
@@ -30,5 +31,18 @@ const postcssPlugins = addPostcssPlugins([
   }),
 ])
 
+// 排除第三方的依赖包
+const obj =
+  // 只有生产环境才会剔除（yarn build之后的项目就是生产环境，yarn start的项目就是develop开发环境）
+  process.env.NODE_ENV === 'production'
+    ? {
+        // key为项目中的包名，value为全局变量名，表示从全局变量里面导入
+        react: 'React',
+        'react-dom': 'ReactDOM',
+      }
+    : {}
+
+const externals = addWebpackExternals(obj)
+
 // 导出要进行覆盖的 webpack 配置
-module.exports = override(babelPlugins, webpackAlias, postcssPlugins)
+module.exports = override(externals, babelPlugins, webpackAlias, postcssPlugins)
